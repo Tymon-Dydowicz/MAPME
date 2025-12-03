@@ -1,5 +1,5 @@
 import pandas as pd
-from src.Config import Settings, PreprocessingSettings
+from src.utils.Config import Settings, PreprocessingSettings
 
 class DataAnalyzer:
     def __init__(self, data: pd.DataFrame, settings: Settings):

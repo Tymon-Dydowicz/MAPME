@@ -1,6 +1,6 @@
 import re
 from typing import List
-from src.Config import Settings
+from src.utils.Config import Settings
 
 class Parser:
     def __init__(self, settings: Settings):

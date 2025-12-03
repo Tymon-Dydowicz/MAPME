@@ -6,7 +6,7 @@ from torchvision import transforms
 from pathlib import Path
 from PIL import Image, ImageOps
 from tqdm import tqdm
-from src.Config import PreprocessingSettings
+from src.utils.Config import PreprocessingSettings
 
 class DataProcessor:
     def __init__(self, df: pd.DataFrame, settings: PreprocessingSettings):

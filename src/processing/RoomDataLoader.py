@@ -1,10 +1,10 @@
-from src.Config import Settings
-from src.Parser import Parser
+from src.utils.Config import Settings
+from src.utils.Parser import Parser
 import pandas as pd
 import numpy as np
 import os
 
-class DataLoader:
+class RoomDataLoader:
     def __init__(self, settings: Settings):
         self.dataPath = settings.dataPath
         self.imageExtensions = settings.imageExtension
