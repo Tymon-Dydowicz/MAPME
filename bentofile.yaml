@@ -1,0 +1,13 @@
+service: "deploy.service:RoomService"
+labels:
+  project: room-classification
+include:
+  - "src/deploy/**"
+  - "src/models/**"
+python:
+  packages:
+    - torch
+    - torchvision
+    - pytorch-lightning
+    - Pillow
+    - wandb

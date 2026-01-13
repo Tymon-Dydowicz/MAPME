@@ -1,5 +1,6 @@
 import pandas as pd
 import optuna
+import bentoml
 from src.utils.Config import Settings, settings
 from src.processing.DataAnalyzer import DataAnalyzer
 from src.processing.DataProcessor import DataProcessor
@@ -16,7 +17,8 @@ from src.processing.RoomDataset import RoomDataModule
 from src.models.Classifiers import RoomClassifier
 from src.models.LightningModule import RoomLightningModule
 
-CSV_PATH = "data/processed/processed_dataset.csv"
+# CSV_PATH = "data/processed/processed_dataset.csv"
+CSV_PATH = "data/raw/dataset.csv"
 
 def objective(trial):
     lr = trial.suggest_float("lr", 1e-5, 1e-2, log=True)
@@ -58,12 +60,34 @@ def train():
 
     trainer = pl.Trainer(
         accelerator="auto",
-        max_epochs=10,
+        max_epochs=1,
         logger=logger,
         callbacks=[checkpoint],
     )
 
     trainer.fit(lit, datamodule=dm)
+
+    best_model_path = checkpoint.best_model_path
+    lit_model = RoomLightningModule.load_from_checkpoint(
+        best_model_path, 
+        model=RoomClassifier(num_classes=dm.num_classes)
+    )
+    
+    model_to_save = lit_model.model
+
+    class_names = dm.train_set.dataset.class_names
+    print(f"Class names: {class_names}")
+    
+    bentoml.pytorch.save_model(
+        "room_classifier",
+        model_to_save,
+        signatures={"__call__": {"batchable": True}},
+        metadata={
+            "class_names": class_names,
+            "img_size": dm.img_size
+        }
+    )
+    print(f"Model saved to BentoML store from {best_model_path}")
 
 def loadSettings():
     return settings
@@ -92,5 +116,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # train()
-    tune()
+    train()
+    # tune()
